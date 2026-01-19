@@ -13,13 +13,13 @@ Pythonベースの迷路生成とゴール探索プログラム
 
 個人目標
 - メンバーやAIに依存せず、問題なくプロジェクトが進められる ”基本設計” が組めるようになる
-- チームプロジェクトで最低限困らないGITスキルを獲得する
 
 ディレクトリ構成
 ```
 .
 ├── Makefile
 ├── README.md
+├── .gitignore
 ├── a_maze_ing.py          # 全体の統括（エントリーポイント）
 ├── config.txt
 ├── requirements.txt       # 依存ライブラリ（mlx, mypy, flake8等
@@ -66,17 +66,31 @@ Team member
 ayhirose
 
 - 設計
+- `visualizer`の実装
+
+rtsubuku
+- `config.txt`パーサーの実装
 
 
 Planning
--  [ ]  **Phase 1:基盤作成**
+-  [ ]  **Phase 1: 基盤作成**
     - [ ] リポジトリ作成 & `.gitignore` 設定
     - [ ] `config.txt`パーサー実装
     - [ ] `MazeGenerator`クラス定義
-- [] **Phase 2:コアロジック**
-    - [] 迷路生成アルゴリズムの実装
-    - [] PERFECTと
-    - [] `MazeGenerator`クラス定義
+- [ ] **Phase 2: コアロジック**
+    - [ ] 迷路生成アルゴリズムの実装
+    - [ ] PERFECTフラグでの作り分け
+    - [ ] 「42」パターンの埋め込み
+    - [ ] 最短経路探索の実装
+    - [ ] PACMANのメソッド
+- [ ] **Phase 3: アプリケーション**
+    - [ ] ファイル出力(16進数表記)
+    - [ ] `output_validator.py` をpass
+    - [ ] `visualizer` の実装
+    - [ ] ユーザー操作の実装
+- [ ] **Phase 4: パッケージ化**
+    - [ ] `setup.py`の作成
+
 
 
 Improvement / Eflection point
@@ -85,3 +99,6 @@ Tools
 
 
 ### Resources
+
+AI (Gemini)
+- 設計のテンプレート作成
