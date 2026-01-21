@@ -74,14 +74,13 @@ rtsubuku
 
 Planning
 -  [ ]  **Phase 1: 基盤作成**
-    - [ ] リポジトリ作成 & `.gitignore` 設定
-    - [ ] `config.txt`パーサー実装
-    - [ ] `MazeGenerator`クラス定義
+    - [x] `config.txt`パーサー実装
+    - [x] `MazeGenerator`クラス定義
 - [ ] **Phase 2: コアロジック**
     - [ ] 迷路生成アルゴリズムの実装
     - [ ] PERFECTフラグでの作り分け
     - [ ] 「42」パターンの埋め込み
-    - [ ] 最短経路探索の実装
+    - [x] 最短経路探索の実装
     - [ ] PACMANのメソッド
 - [ ] **Phase 3: アプリケーション**
     - [ ] ファイル出力(16進数表記)
