@@ -5,4 +5,3 @@ EXIT=20,20
 OUTPUT_FILE=maze.txt
 PERFECT=True
 SEED=42
-P_MODE=False

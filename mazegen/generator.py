@@ -1,5 +1,75 @@
 #!/usr/bin/env python3
 import random
+import sys
+import ast
+from pydantic import BaseModel, Field, model_validator, \
+                     ValidationError, field_validator
+from typing import Annotated, Any
+
+PosiviveInt = Annotated[int, Field(ge=0,
+                                   description="正の整数型")]
+
+
+class _MazeConfig(BaseModel):
+    """
+    MazeGeneratorクラス初期値検証クラス
+    """
+    width: int = Field(alias='WIDTH',
+                       ge=0,
+                       le=42,
+                       default=20,
+                       description="迷路の横幅")
+    height: int = Field(alias='HEIGHT',
+                        ge=0,
+                        le=42,
+                        default=15,
+                        description="迷路の縦幅")
+    entry: tuple[PosiviveInt, PosiviveInt] = Field(alias="ENTRY",
+                                                   default=(0, 0),
+                                                   description="迷路のスタート地点")
+    exit: tuple[PosiviveInt, PosiviveInt] = Field(alias="EXIT",
+                                                  default=(19, 14),
+                                                  description="迷路のゴール地点")
+    seed: int = Field(alias="SEED",
+                      ge=0,
+                      le=1000,
+                      default=42,
+                      description="迷路の乱数種")
+    perfect: bool = Field(alias="PERFECT",
+                          default=True,
+                          description="PERFECTフラグ")
+
+    @field_validator('entry', 'exit', mode='before')
+    @classmethod
+    def rescue_invalid_values_tuple(cls, v: Any, info) -> Any:
+        if isinstance(v, tuple):
+            return v
+        if isinstance(v, str):
+            try:
+                return ast.literal_eval(v)
+            except Exception:
+                return v
+        return v
+
+    @model_validator(mode="after")
+    def _after_valid_mazeconfig(self) -> "_MazeConfig":
+        """
+        以下の項目を追加検証する
+
+            ・entryがwidthとheightを超えていないか
+            ・entryとgoalが重なってないか
+        """
+        w, h = self.width, self.height
+        ex, ey = self.entry
+        gx, gy = self.exit
+
+        if w < ex or h < ey:
+            raise ValueError(f"Start地点 {ex, ey} は迷路のサイズ {w, h} を超えています")
+        if w < gx or h < gy:
+            raise ValueError(f"Goal地点 {gx, gy} は迷路のサイズ {w, h} を超えています")
+        if self.entry == self.exit:
+            raise ValueError(f"Start地点 {ex, ey} とGoal地点 {gx, gy} が重なっています")
+        return self
 
 
 class MazeGenerator:
@@ -8,28 +78,47 @@ class MazeGenerator:
     creaat maze
     """
 
-    def __init__(self, conf: dict = {}):
+    def __init__(self, confdict: dict = {}):
         """
         initiialize
         """
 
-        self._maze = []
-        self._path = []
-        self._visited = []
-        self._width = conf.get('WIDTH', 20)  # .number of cell
-        self._height = conf.get('HEIGHT', 15)
-        self._entry = conf.get('ENTRY', (0, 0))
-        self._goal = conf.get('GOAL', (19, 14))
-        self._seed = conf.get('SEED', 42)
+        try:
+            conf = _MazeConfig(**confdict)
+            self._maze = []
+            self._path = []
+            self._visited = []
+            self._width = conf.width
+            self._height = conf.height
+            self._entry = conf.entry
+            self._exit = conf.exit
+            self._seed = conf.seed
+            self._perfect = conf.perfect
+        except ValidationError as e:
+            print("Validation error:")
+            for err in e.errors():
+                location = err['loc'][0] if err['loc'] else "Model Rules"
+                print(f"    - {location}: {err['msg']}")
+                print(f"      input:({err['input']})")
+            sys.exit(1)
 
     @property  # getter
     def maze(self) -> list:
         return self._maze
 
+    @property
+    def seed(self) -> int:
+        return self._seed
+
+    @seed.setter
+    def seed(self, value) -> None:
+        if value < 0:
+            raise ValueError("Seedはマイナスの値に変更できません")
+        print(f"Seedは {value} に変更されました")
+
     def generate(self):
         seed = self._seed
         random.seed(seed) if seed > 0 else random.seed(42)
-        self._seed = seed
         self._init_maze()
         self._generate_maze(*self._entry)
         self._find_path()
@@ -61,7 +150,8 @@ class MazeGenerator:
         if self._visited[y][x] == 1:
             return
         # (x軸移動, y軸移動, 自身から見た破壊すべき壁ビット, 移動先から見た破壊すべき壁ビット)
-        wasd = [(-1, 0, 8, 2, "W"), (0, -1, 1, 4, "S"), (1, 0, 2, 8, "E"), (0, 1, 4, 1, "N")]
+        wasd = [(-1, 0, 8, 2, 'W'), (0, -1, 1, 4, 'S'),
+                (1, 0, 2, 8, 'E'), (0, 1, 4, 1, 'N')]
         random.shuffle(wasd)
         self._visited[y][x] = 1
         for d in wasd:

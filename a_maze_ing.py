@@ -10,15 +10,6 @@ def a_maze_ing() -> None:
     """
 
     conf = config_parser(sys.argv)
-    conf = {'WIDTH': 30,
-            "HEIGHT": 30,
-            "ENTRY": (0, 0),
-            "EXIT": (20, 20),
-            "OUTPUT_FILE": 'maze.txt',
-            "PERFECT": True,
-            "SEED": 42,
-            "P_MODE": False}
-    print(conf)
     generator = MazeGenerator(conf)
     generator.generate()
     visualize_ascii(generator.maze)

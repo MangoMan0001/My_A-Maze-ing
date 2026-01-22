@@ -50,7 +50,6 @@ EXIT=19,14	# Exit coordinates (x,y)
 OUTPUT_FILE=maze.txt	# Output filename
 PERFECT=True	# Is the maze perfect?
 SEED=42			# Maze seed
-P_MODE=False	# is the PAC_MAN mode?
 ```
 
 PERFECTがTrueだと正答のルートが複数ある迷路が生成される
@@ -65,30 +64,57 @@ Team member
 
 ayhirose
 
-- 設計
-- `visualizer`の実装
+- 基礎設計
+- `MazeGenerator.generate`の実装
 
 rtsubuku
-- `config.txt`パーサーの実装
+- `config_perser`の実装
+- `visualizer`の実装
+- `MazeGenerator.find_path`の実装
 
 
 Planning
 -  [ ]  **Phase 1: 基盤作成**
-    - [x] `config.txt`パーサー実装
-    - [x] `MazeGenerator`クラス定義
+    - [x] `config.txt`パーサー実装  1/20
+    - [x] `MazeGenerator`クラス定義  1/20
+    - [ ] エラーハンドリングの最適化
 - [ ] **Phase 2: コアロジック**
-    - [ ] 迷路生成アルゴリズムの実装
+    - [x] 迷路生成アルゴリズムの実装 1/21
     - [ ] PERFECTフラグでの作り分け
-    - [ ] 「42」パターンの埋め込み
-    - [x] 最短経路探索の実装
+    - [x] 「42」パターンの埋め込み 1/21
+    - [x] 最短経路探索の実装 1/21
     - [ ] PACMANのメソッド
 - [ ] **Phase 3: アプリケーション**
     - [ ] ファイル出力(16進数表記)
     - [ ] `output_validator.py` をpass
-    - [ ] `visualizer` の実装
+    - [x] `visualizer` の実装
     - [ ] ユーザー操作の実装
 - [ ] **Phase 4: パッケージ化**
     - [ ] `setup.py`の作成
+
+1/16
+初日
+課題理解と土台作り、実装機能の洗い出し
+
+1/17
+READMEのプレバージョン完成
+PACMAN、mazegeneratorの解読
+
+1/18
+ヴィジュアライザー導入開始
+
+1/19
+ヴィジュアライザー作成
+
+1/20 21
+MazeGeneratorクラスの迷路出力が可能になった。
+Visualizer,16進数のマップデータをASCIIでターミナルに出力できるようになった。
+PERFECTフラグの実装とGOALを壁にしない仕組みが足りない。
+config_perserで抜き取ったデータ型はMazeGeneratorクラスで扱ってるデータ型に変換が必要だとわかった。
+STARTやGOALの位置、MAPSIZEのバリデーションはMazeGeneratorでやるべきかconfig_perserでやるべきか要検討。
+
+1/22
+目標：PERFECTフラグの実装とGOALを壁にしない仕組みの導入。config_perserでデータ型の変換と検証の導入。
 
 
 
