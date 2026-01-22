@@ -78,6 +78,7 @@ Planning
     - [x] `config.txt`パーサー実装  1/20
     - [x] `MazeGenerator`クラス定義  1/20
     - [ ] エラーハンドリングの最適化
+    - [ ] バリデーションの最適化
 - [ ] **Phase 2: コアロジック**
     - [x] 迷路生成アルゴリズムの実装 1/21
     - [ ] PERFECTフラグでの作り分け
@@ -115,7 +116,7 @@ STARTやGOALの位置、MAPSIZEのバリデーションはMazeGeneratorでやる
 
 1/22
 目標：PERFECTフラグの実装とGOALを壁にしない仕組みの導入。config_perserでデータ型の変換と検証の導入。
-
+config.txtのバリデーションはMazeGeneratorで前処理する形で導入
 
 
 Improvement / Eflection point

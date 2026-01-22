@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field, model_validator, \
                      ValidationError, field_validator
 from typing import Annotated, Any
 
-PosiviveInt = Annotated[int, Field(ge=0,
+PositiveInt = Annotated[int, Field(ge=0,
                                    description="正の整数型")]
 
 
@@ -24,10 +24,10 @@ class _MazeConfig(BaseModel):
                         le=42,
                         default=15,
                         description="迷路の縦幅")
-    entry: tuple[PosiviveInt, PosiviveInt] = Field(alias="ENTRY",
+    entry: tuple[PositiveInt, PositiveInt] = Field(alias="ENTRY",
                                                    default=(0, 0),
                                                    description="迷路のスタート地点")
-    exit: tuple[PosiviveInt, PosiviveInt] = Field(alias="EXIT",
+    exit: tuple[PositiveInt, PositiveInt] = Field(alias="EXIT",
                                                   default=(19, 14),
                                                   description="迷路のゴール地点")
     seed: int = Field(alias="SEED",
@@ -41,7 +41,7 @@ class _MazeConfig(BaseModel):
 
     @field_validator('entry', 'exit', mode='before')
     @classmethod
-    def rescue_invalid_values_tuple(cls, v: Any, info) -> Any:
+    def _rescue_invalid_values_tuple(cls, v: Any, info) -> Any:
         if isinstance(v, tuple):
             return v
         if isinstance(v, str):
@@ -64,12 +64,29 @@ class _MazeConfig(BaseModel):
         gx, gy = self.exit
 
         if w < ex or h < ey:
-            raise ValueError(f"Start地点 {ex, ey} は迷路のサイズ {w, h} を超えています")
+            raise ValueError(f"ENTRY {ex, ey} exceeds maze size {w, h}")
         if w < gx or h < gy:
-            raise ValueError(f"Goal地点 {gx, gy} は迷路のサイズ {w, h} を超えています")
+            raise ValueError(f"ENTRY {gx, gy} exceeds maze size {w, h}")
         if self.entry == self.exit:
-            raise ValueError(f"Start地点 {ex, ey} とGoal地点 {gx, gy} が重なっています")
+            raise ValueError(f"ENTRY {ex, ey} and EXIT {gx, gy} overlap")
         return self
+
+    def report_status(self) -> None:
+        """
+        MazeGeneratorの現在の設定を出力する
+        """
+
+        print("===Current settings===")
+
+        all_fields = self.model_fields.keys()
+        set_fields = self.model_fields_set
+
+        for name in all_fields:
+            value = getattr(self, name)
+            if name not in set_fields:
+                print(f"{name.upper()} (Default): {value}")
+            else:
+                print(f"{name.upper()}: {value}")
 
 
 class MazeGenerator:
@@ -85,6 +102,7 @@ class MazeGenerator:
 
         try:
             conf = _MazeConfig(**confdict)
+            conf.report_status()
             self._maze = []
             self._path = []
             self._visited = []
@@ -113,8 +131,8 @@ class MazeGenerator:
     @seed.setter
     def seed(self, value) -> None:
         if value < 0:
-            raise ValueError("Seedはマイナスの値に変更できません")
-        print(f"Seedは {value} に変更されました")
+            raise ValueError("seed cannot be changed to a negative value.")
+        print(f"Seed has been changed to {value}")
 
     def generate(self):
         seed = self._seed
