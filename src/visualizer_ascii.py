@@ -53,14 +53,15 @@ def visualize_ascii(maze: list) -> None:
         converted_maze[y][W-1] = 1
 
     draw_ascii_maze(converted_maze)
+    return (converted_maze)
 
 
-def draw_ascii_maze(converted_maze):
-    WALL = "██"
-    START = "S"
-    GOAL = "G"
+def draw_ascii_maze(converted_maze, wall_color=0):
+    WALL = f"\x1b[{wall_color}m██\x1b[0m"
+    START = "\x1b[42m  \x1b[0m"
+    GOAL = "\x1b[41m  \x1b[0m"
     PATH = "  "
-    WALK_PAHT = "."
+    WALK_PATH = "足"
 
     for row in converted_maze:
         line = ""
@@ -69,13 +70,13 @@ def draw_ascii_maze(converted_maze):
                 line += WALL
             elif cell == 0:
                 line += PATH
-            elif cell == "S":
+            elif cell == 2:
                 line += START
-            elif cell == "G":
+            elif cell == 3:
                 line += GOAL
-
+            elif cell == 4:
+                line += WALK_PATH
         print(line)
 
-
-if __name__ == "__main__":
-    pass
+# if __name__ == "__main__":
+#     pass
