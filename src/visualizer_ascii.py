@@ -17,8 +17,8 @@ def visualize_ascii(maze: list) -> None:
     for line in maze:
         for info in line:
             bits = bin(info)[2:].zfill(4)
-            print(bits, end=",")
-        print()
+        #     print(bits, end=",")
+        # print()
 
     x, y = 0, 0          # 左上セルだけ
     for y in range(height):
@@ -39,8 +39,8 @@ def visualize_ascii(maze: list) -> None:
             if bits[3] == "0":  # 上
                 converted_maze[cy-1][cx] = 0
 
-    for c_line in converted_maze:
-        print(f"{c_line},")
+    # for c_line in converted_maze:
+    #     print(f"{c_line},")
 
     H = 2*height + 1
     W = 2*width + 1

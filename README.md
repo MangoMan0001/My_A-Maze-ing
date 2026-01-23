@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by ayhirose.*
+*This project has been created as part of the 42 curriculum by ayhirose rtsubuku.*
 
 # A-Maze-ing
 
@@ -46,7 +46,7 @@ WIDTH=20	# Maze width (number of cells)
 HEIGHT=15	# Maze height
 ENTRY=0,0	# Entry coordinates (x,y)
 EXIT=19,14	# Exit coordinates (x,y)
-OUTPUT_FILE=maze.txt	# Output filename
+OUTPUT_FILE=maze.txt	# Output filename(.txt)
 PERFECT=True	# Is the maze perfect?
 SEED=42			# Maze seed
 ```

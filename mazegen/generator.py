@@ -2,21 +2,22 @@
 import random
 import sys
 import ast
+from pathlib import Path
 from pydantic import BaseModel, Field, model_validator, \
-                     ValidationError, field_validator
+                     field_validator, ValidationError
 from typing import Annotated, Any
 from src import visualize_ascii
-from collections import deque
-
+# from collections import deque
 
 PositiveInt = Annotated[int, Field(ge=0,
                                    description="正の整数型")]
 
 
-class _MazeConfig(BaseModel):
+class MazeConfig(BaseModel):
     """
     MazeGeneratorクラス初期値検証クラス
     """
+    # .[弾くもの]intと数字以外のstr
     width: int = Field(alias='WIDTH',
                        ge=0,
                        le=42,
@@ -27,24 +28,59 @@ class _MazeConfig(BaseModel):
                         le=42,
                         default=15,
                         description="迷路の縦幅")
+    # .[弾くもの]tuple以外
     entry: tuple[PositiveInt, PositiveInt] = Field(alias="ENTRY",
                                                    default=(0, 0),
                                                    description="迷路のスタート地点")
     exit: tuple[PositiveInt, PositiveInt] = Field(alias="EXIT",
                                                   default=(19, 14),
                                                   description="迷路のゴール地点")
+    # .[弾くもの]数字、リスト、dict、Noneなど
+    output_file: Path = Field(alias="OUTPUT_FILE",
+                              default=Path("maze.txt"),
+                              description="出力ファイル名")
     seed: int = Field(alias="SEED",
                       ge=0,
                       le=1000,
                       default=42,
                       description="迷路の乱数種")
+    # .[弾くもの]boolと文字のboll以外
     perfect: bool = Field(alias="PERFECT",
                           default=True,
                           description="PERFECTフラグ")
 
+    # .インスタンス作成前に実行されるためclassmethodが必要
+    @field_validator('output_file')  # .何も書かないとafterになる
+    @classmethod
+    def _validate_file_nama(cls, v: Any) -> Any:
+        """
+        以下の追加検証/修正を行う
+            ・'.txt'がなければ追加する
+            ・同名のディレクトリが存在するか
+            ・open()が可能か
+        """
+
+        if v.suffix != '.tst':
+            v.with_suffix('.txt')
+
+        if v.exists() and v.is_dir():
+            raise ValueError(f"A directory named {v.name} already exists.")
+
+        try:
+            if v.exists():
+                with open(v, 'a'):
+                    pass
+            else:
+                with open(v, 'x'):
+                    pass
+                v.unlink()
+        except OSError as e:
+            raise ValueError(f"File_NameError: {e}")
+        return v
+
     @field_validator('entry', 'exit', mode='before')
     @classmethod
-    def _rescue_invalid_values_tuple(cls, v: Any, info) -> Any:
+    def _rescue_invalid_values_tuple(cls, v: Any) -> Any:
         if isinstance(v, tuple):
             return v
         if isinstance(v, str):
@@ -55,7 +91,7 @@ class _MazeConfig(BaseModel):
         return v
 
     @model_validator(mode="after")
-    def _after_valid_mazeconfig(self) -> "_MazeConfig":
+    def _after_valid_mazeconfig(self) -> "MazeConfig":
         """
         以下の項目を追加検証する
 
@@ -106,16 +142,18 @@ class MazeGenerator:
         try:
             if not confdict:
                 confdict = {}
-            self.conf = _MazeConfig(**confdict)
+            self._conf = MazeConfig(**confdict)
             self._maze = []
             self._path = []
+            self._grid = []
             self._visited = []
-            self._width = self.conf.width
-            self._height = self.conf.height
-            self._entry = self.conf.entry
-            self._exit = self.conf.exit
-            self._seed = self.conf.seed
-            self._perfect = self.conf.perfect
+            self._width = self._conf.width
+            self._height = self._conf.height
+            self._entry = self._conf.entry
+            self._exit = self._conf.exit
+            self._output_file = self._conf.output_file
+            self._seed = self._conf.seed
+            self._perfect = self._conf.perfect
         except ValidationError as e:
             print("Validation error:")
             for err in e.errors():
@@ -125,14 +163,46 @@ class MazeGenerator:
             sys.exit(1)
 
     @property  # getter
+    def conf(self) -> MazeConfig:
+        return self._conf
+
+    @property  # getter
     def maze(self) -> list:
         return self._maze
 
-    @property
+    @property  # getter
+    def path(self) -> list:
+        return self._path
+
+    @property  # getter
+    def grid(self) -> list:
+        return self._grid
+
+    @property  # getter
+    def width(self) -> int:
+        return self._width
+
+    @property  # getter
+    def height(self) -> int:
+        return self._height
+
+    @property  # getter
+    def entry(self) -> tuple:
+        return self._entry
+
+    @property  # getter
+    def exit(self) -> tuple:
+        return self._exit
+
+    @property  # getter
+    def output_file(self) -> Path:
+        return self._output_file
+
+    @property  # getter
     def seed(self) -> int:
         return self._seed
 
-    @seed.setter
+    @seed.setter  # setter
     def seed(self, value) -> None:
         if value < 0:
             raise ValueError("seed cannot be changed to a negative value.")
@@ -243,61 +313,6 @@ class MazeGenerator:
         """
         _find_path の Docstring
         """
-        # converted_maze = visualize_ascii(self.maze)
-        # height = len(converted_maze)
-        # width = len(converted_maze[0])
-
-        # for y in range(height):
-        #     for x in range(width):
-        #         if converted_maze[y][x] == 2:
-        #             self._entry = (x, y)
-        #         elif converted_maze[y][x] == 3:
-        #             self._goal = (x, y)
-
-        # print("Goal:", self._exit)
-
-        # queue = deque()
-        # queue.append(self._entry)
-        # visited = set()
-        # visited.add(self._entry)
-
-        # counter = 0
-        # prev = {}
-        # prev[self._entry] = None
-        # while queue:
-        #     x, y = queue.popleft()
-        #     if (x, y) == self._exit:
-        #         print(counter, "now:", x, y, "Here is the goal!!")
-        #         break
-        #     else:
-        #         print(counter, "now:", x, y)
-
-        #     for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
-        #         nx = x + dx
-        #         ny = y + dy
-        #         if 0 <= nx < width and 0 <= ny < height:
-        #             if converted_maze[ny][nx] != 1 and (nx, ny) not in visited:
-        #                 visited.add((nx, ny))
-        #                 queue.append((nx, ny))
-        #                 prev[(nx, ny)] = (x, y)
-        #     counter += 1
-
-        # path = []
-        # cur = self._exit
-
-        # while cur is not None:
-        #     path.append(cur)
-        #     cur = prev[cur]
-
-        # path.reverse()
-        # print(path)
-        # print("shortest way", len(path))
-
-        # for (x, y) in path:
-        #     if converted_maze[y][x] == 0:
-        #         converted_maze[y][x] = 4
-
-        # draw_ascii_maze(converted_maze)
 
 
 if __name__ == "__main__":

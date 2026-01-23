@@ -1,6 +1,6 @@
 #!usr/bin/env python3
 import sys
-from src import config_parser, visualize_ascii
+from src import config_parser, visualize_ascii, output_maze
 from mazegen import MazeGenerator
 
 
@@ -13,6 +13,7 @@ def a_maze_ing() -> None:
     generator = MazeGenerator(conf)
     generator.generate()
     visualize_ascii(generator.maze)
+    output_maze(generator)
 
 
 if __name__ == "__main__":
