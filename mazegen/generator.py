@@ -6,8 +6,7 @@ from pathlib import Path
 from pydantic import BaseModel, Field, model_validator, \
                      field_validator, ValidationError
 from typing import Annotated, Any
-from src import visualize_ascii
-# from collections import deque
+from collections import deque
 
 PositiveInt = Annotated[int, Field(ge=0,
                                    description="正の整数型")]
@@ -122,10 +121,10 @@ class MazeConfig(BaseModel):
 
         for name in all_fields:
             value = getattr(self, name)
-            if name not in set_fields:
-                print(f"{name.upper()} (Default): {value}")
-            else:
+            if name in set_fields:
                 print(f"{name.upper()}: {value}")
+            else:
+                print(f"{name.upper()} (Default): {value}")
 
 
 class MazeGenerator:
@@ -143,10 +142,13 @@ class MazeGenerator:
             if not confdict:
                 confdict = {}
             self._conf = MazeConfig(**confdict)
+
             self._maze = []
             self._path = []
+            self._way = []
             self._grid = []
             self._visited = []
+
             self._width = self._conf.width
             self._height = self._conf.height
             self._entry = self._conf.entry
@@ -173,6 +175,10 @@ class MazeGenerator:
     @property  # getter
     def path(self) -> list:
         return self._path
+
+    @property  # getter
+    def way(self) -> list:
+        return self._way
 
     @property  # getter
     def grid(self) -> list:
@@ -202,21 +208,33 @@ class MazeGenerator:
     def seed(self) -> int:
         return self._seed
 
+    @property  # getter
+    def perfect(self) -> bool:
+        return self._perfect
+
     @seed.setter  # setter
     def seed(self, value) -> None:
         if value < 0:
-            raise ValueError("seed cannot be changed to a negative value.")
-        print(f"Seed has been changed to {value}")
+            raise ValueError("SEED cannot be changed to a negative value.")
+        self._seed = value
+        self._conf.seed = value
+        print(f"SEED has been changed to {value}")
+
+    @perfect.setter  # setter
+    def perfect(self, value) -> None:
+        self._perfect = value
+        self._conf.perfect = value
+        print(f"PEFECT has been changed to {value}")
 
     def generate(self):
         seed = self._seed
         random.seed(seed) if seed > 0 else random.seed(42)
         self._init_maze()
         self._generate_maze(*self._entry)
-        self._find_path()
-        self.conf.report_status()
         if not self._perfect:
             self._break_the_wall()
+        self._find_path()
+        self.conf.report_status()
 
     def _init_maze(self) -> None:
         """
@@ -284,7 +302,6 @@ class MazeGenerator:
         """
         3つ壁があるマスの壁をランダムに1枚破壊する
         """
-        visualize_ascii(self._maze)
         # (x軸移動, y軸移動, 自身から見た破壊すべき壁ビット, 移動先から見た破壊すべき壁ビット)
         wasd = [(-1, 0, 8, 2, 'W'), (0, -1, 1, 4, 'S'),
                 (1, 0, 2, 8, 'E'), (0, 1, 4, 1, 'N')]
@@ -309,10 +326,90 @@ class MazeGenerator:
                             self._maze[ny][nx] -= yw
                             break
 
-    def _find_path(self) -> None:
-        """
-        _find_path の Docstring
-        """
+    def _convert_hex_maze_to_grid(self) -> None:
+        width = self._width
+        height = self._height
+
+        self._grid = [[1 for _ in range(2 * width + 1)]
+                      for _ in range(2 * height + 1)]
+
+        for y in range(height):
+            gy = 2*y + 1
+            for x in range(width):
+                gx = 2*x + 1
+                info = self._maze[y][x]
+                bits = bin(info)[2:].zfill(4)
+
+                self._grid[gy][gx] = 0  # セル
+
+                if bits[0] == "0":  # 左
+                    self._grid[gy][gx-1] = 0
+                if bits[1] == "0":  # 下
+                    self._grid[gy+1][gx] = 0
+                if bits[2] == "0":  # 右
+                    self._grid[gy][gx+1] = 0
+                if bits[3] == "0":  # 上
+                    self._grid[gy-1][gx] = 0
+                if info == 15:
+                    self._grid[gy][gx] = 5
+
+    def _find_path(self):
+        self._convert_hex_maze_to_grid()
+
+        start = (self._entry[0] * 2 + 1, self._entry[1] * 2 + 1)
+        goal = (self._exit[0] * 2 + 1, self._exit[1] * 2 + 1)
+
+        sx, sy = start
+        gx, gy = goal
+
+        height = len(self._grid)
+        width = len(self._grid[0])
+
+        queue = deque([start])
+        visited = {start}
+        prev: dict[tuple[int, int], tuple[int, int] | None] = {start: None}
+
+        while queue:
+            x, y = queue.popleft()
+            if (x, y) == goal:
+                break
+
+            for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < width and 0 <= ny < height:
+                    if self._grid[ny][nx] != 1 and (nx, ny) not in visited:
+                        visited.add((nx, ny))
+                        prev[(nx, ny)] = (x, y)
+                        queue.append((nx, ny))
+
+        cur = goal
+        self._path = []
+        while cur is not None:
+            self._path.append(cur)
+            cur = prev[cur]
+        self._path.reverse()
+
+        self._grid[sy][sx] = 2
+        self._grid[gy][gx] = 3
+        self._path_to_way()
+
+    def _path_to_way(self):
+        self._way = []
+        for (x1, y1), (x2, y2) in zip(self._path, self._path[1:]):
+            dx = x2 - x1
+            dy = y2 - y1
+
+            if dx == 1 and dy == 0:
+                self._way.append("E")
+            elif dx == -1 and dy == 0:
+                self._way.append("W")
+            elif dx == 0 and dy == 1:
+                self._way.append("S")
+            elif dx == 0 and dy == -1:
+                self._way.append("N")
+            else:
+                raise ValueError(f"Invalid move: {(x1, y1)} -> {(x2, y2)}")
+        print(self._way)
 
 
 if __name__ == "__main__":

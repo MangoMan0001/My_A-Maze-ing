@@ -22,7 +22,7 @@ def output_maze(generator: MazeGenerator) -> None:
 
     lines = []
     maze = generator.maze
-    path = generator.path
+    way = generator.way
     entry = generator.entry
     exit = generator.exit
     output_file = generator.output_file
@@ -33,7 +33,7 @@ def output_maze(generator: MazeGenerator) -> None:
     lines.append("")
     lines.append(f"{entry}")
     lines.append(f"{exit}")
-    lines.append(f"{path}")
+    lines.append(f"{way}")
     output = "\n".join(lines)
 
     with open(output_file, 'w') as f:

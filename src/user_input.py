@@ -1,28 +1,46 @@
-from mazegen import MazeGenerator, generator
 import random
-from src import visualizer_ascii, draw_ascii_maze
+import os
+from src import output_maze
+from mazegen import MazeGenerator
 
 
-def user_input_choice(generator: MazeGenerator, maze) -> None:
-    """
-    ユーザーのインプットによって出力を変える
-    """
+def user_input_choice(generator: MazeGenerator, view):
+    view.draw()
+    while True:
+        user_input = int(input("Input something: "))
 
-    while (True):
-        user_input = int(input("Input something:"))
         if user_input == 1:
-            generator.setseed(random.randint(1, 1000))
+            os.system('clear')
+            generator.seed = random.randint(1, 1000)
+            print(generator.seed)
             generator.generate()
-            visualizer_ascii(generator.maze)
-            continue
+            view.draw()
+            output_maze(generator)
+
         elif user_input == 2:
-            wall_color = random.randint(30, 39)
-            draw_ascii_maze(maze, wall_color)
-            continue
+            os.system('clear')
+            view.set_wall_color(random.randint(30, 39))
+            generator.conf.report_status()
+            view.draw()
+
         elif user_input == 3:
-            generator.find_path()
-            continue
+            os.system('clear')
+            view.toggle_path()
+            view.draw()
+
         elif user_input == 4:
+            os.system('clear')
             break
-        print("matigaetmasuyo number ok???")
-        continue
+
+        elif user_input == 5:
+            os.system('clear')
+            if generator.perfect:
+                generator.perfect = False
+            else:
+                generator.perfect = True
+            generator.generate()
+            view.draw()
+            output_maze(generator)
+
+        else:
+            print("matigaetmasuyo number ok???")
