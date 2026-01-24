@@ -73,7 +73,7 @@ rtsubuku
 
 
 Planning
--  [ ]  **Phase 1: 基盤作成**
+-  [x]  **Phase 1: 基盤作成**
     - [x] `config.txt`パーサー実装  1/20
     - [x] `MazeGenerator`クラス定義  1/20
 - [ ] **Phase 2: コアロジック**
@@ -86,11 +86,11 @@ Planning
         - [x] 最短経路探索の実装 1/21
 - [ ] **Phase 3: アプリケーション**
     - [ ] `output_validator.py` をpass
-        - [ ] ファイル出力(16進数表記)
-    - [ ] `visualizer` の実装
+        - [x] ファイル出力(16進数表記)
+    - [x] `visualizer` の実装
         - [x] 迷路の可視化 1/21
         - [x] path経路の可視化 1/22
-        - [ ] ユーザー操作の実装
+        - [x] ユーザー操作の実装
 - [ ] **Phase 4: パッケージ化**
     - [ ] `setup.py`の作成
 

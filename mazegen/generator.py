@@ -51,7 +51,7 @@ class MazeConfig(BaseModel):
     # .インスタンス作成前に実行されるためclassmethodが必要
     @field_validator('output_file')  # .何も書かないとafterになる
     @classmethod
-    def _validate_file_nama(cls, v: Any) -> Any:
+    def _validate_file_name(cls, v: Any) -> Any:
         """
         以下の追加検証/修正を行う
             ・'.txt'がなければ追加する
@@ -59,7 +59,7 @@ class MazeConfig(BaseModel):
             ・open()が可能か
         """
 
-        if v.suffix != '.tst':
+        if v.suffix != '.txt':
             v.with_suffix('.txt')
 
         if v.exists() and v.is_dir():
@@ -317,12 +317,12 @@ class MazeGenerator:
                         if not (0 <= nx < self._width and
                                 0 <= ny < self._height):
                             continue
-                        if self._maze[ny][nx] == 15:
-                            continue
                         if (x, y) in (self._entry, self._exit):
                             continue
+                        if self._maze[ny][nx] == 15:
+                            continue
                         if cell & mw:
-                            cell -= mw
+                            self._maze[y][x] -= mw
                             self._maze[ny][nx] -= yw
                             break
 
@@ -395,21 +395,23 @@ class MazeGenerator:
 
     def _path_to_way(self):
         self._way = []
-        for (x1, y1), (x2, y2) in zip(self._path, self._path[1:]):
+        # .zipは引数が取り出せない時に処理が終了する
+        # .最後のマス（EXIT）だった時にそこから向かうルートがないため処理が終了する
+        just_cell_path = self.path[::2]
+        for (x1, y1), (x2, y2) in zip(just_cell_path, just_cell_path[1:]):
             dx = x2 - x1
             dy = y2 - y1
 
-            if dx == 1 and dy == 0:
+            if dx == 2 and dy == 0:
                 self._way.append("E")
-            elif dx == -1 and dy == 0:
+            elif dx == -2 and dy == 0:
                 self._way.append("W")
-            elif dx == 0 and dy == 1:
+            elif dx == 0 and dy == 2:
                 self._way.append("S")
-            elif dx == 0 and dy == -1:
+            elif dx == 0 and dy == -2:
                 self._way.append("N")
             else:
                 raise ValueError(f"Invalid move: {(x1, y1)} -> {(x2, y2)}")
-        print(self._way)
 
 
 if __name__ == "__main__":

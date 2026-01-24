@@ -22,17 +22,17 @@ def output_maze(generator: MazeGenerator) -> None:
 
     lines = []
     maze = generator.maze
-    way = generator.way
-    entry = generator.entry
-    exit = generator.exit
+    way = "".join(c for c in generator.way)
+    ex, ey = generator.entry
+    gx, gy = generator.exit
     output_file = generator.output_file
 
     for row in maze:
         row = "".join(f"{cell:X}" for cell in row)
         lines.append(row)
     lines.append("")
-    lines.append(f"{entry}")
-    lines.append(f"{exit}")
+    lines.append(f"{ex},{ey}")
+    lines.append(f"{gx},{gy}")
     lines.append(f"{way}")
     output = "\n".join(lines)
 
