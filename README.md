@@ -62,14 +62,15 @@ PERFECTがTrueだと正答のルートが複数ある迷路が生成される
 Team member
 
 ayhirose
-
 - 基礎設計
 - `MazeGenerator`の実装
+- `file_output`の実装
 
 rtsubuku
 - `config_perser`の実装
 - `visualizer`の実装
 - `MazeGenerator.find_path`の実装
+- `user_input`の実装
 
 
 Planning
@@ -77,19 +78,19 @@ Planning
     - [x] `config.txt`パーサー実装  1/20
     - [x] `MazeGenerator`クラス定義  1/20
 - [x] **Phase 2: コアロジック**
-    - [x]  `MazeGenerator`の実装
+    - [x]  `MazeGenerator`の実装 1/22
         - [x] 迷路生成アルゴリズムの実装 1/21
         - [x] PERFECTフラグでの作り分け 1/22
         - [x] 「42」パターンの埋め込み 1/21
-    - [x] `MazeGenerator.find_path`の実装
+    - [x] `MazeGenerator.find_path`の実装 1/24
         - [x] 最短経路探索の実装 1/21
 - [x] **Phase 3: アプリケーション**
-    - [x] `output_validator.py` をpass
-        - [x] ファイル出力(16進数表記)
-    - [x] `visualizer` の実装
+    - [x] `output_validator.py` をpass 1/24
+        - [x] ファイル出力(16進数表記) 1/24
+    - [x] `visualizer` の実装 1/24
         - [x] 迷路の可視化 1/21
         - [x] path経路の可視化 1/22
-        - [x] ユーザー操作の実装
+        - [x] ユーザー操作の実装 1/23 24
 - [ ] **Phase 4: パッケージ化**
     - [ ] `setup.py`の作成
     - [ ] `Makefile`の作成
