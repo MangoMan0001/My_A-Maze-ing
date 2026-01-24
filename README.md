@@ -76,16 +76,15 @@ Planning
 -  [x]  **Phase 1: 基盤作成**
     - [x] `config.txt`パーサー実装  1/20
     - [x] `MazeGenerator`クラス定義  1/20
-- [ ] **Phase 2: コアロジック**
-    - [ ]  `MazeGenerator`の実装
+- [x] **Phase 2: コアロジック**
+    - [x]  `MazeGenerator`の実装
         - [x] 迷路生成アルゴリズムの実装 1/21
         - [x] PERFECTフラグでの作り分け 1/22
         - [x] 「42」パターンの埋め込み 1/21
-        - [ ] PACMANのメソッド
-    - [ ] `MazeGenerator.find_path`の実装
+    - [x] `MazeGenerator.find_path`の実装
         - [x] 最短経路探索の実装 1/21
-- [ ] **Phase 3: アプリケーション**
-    - [ ] `output_validator.py` をpass
+- [x] **Phase 3: アプリケーション**
+    - [x] `output_validator.py` をpass
         - [x] ファイル出力(16進数表記)
     - [x] `visualizer` の実装
         - [x] 迷路の可視化 1/21
@@ -93,6 +92,8 @@ Planning
         - [x] ユーザー操作の実装
 - [ ] **Phase 4: パッケージ化**
     - [ ] `setup.py`の作成
+    - [ ] `Makefile`の作成
+    - [ ] `README`の完成
 
 1/16 \
 初日 \
@@ -126,6 +127,13 @@ Visualizerもクラス設計を事前にしておくべきだったと反省 \
 
 1/23 \
 目標：PACMANメソッド実装、visualizer、findpath最適化と組み込み、ユーザー操作実装 \
+ユーザー操作、visualizerのクラス化、find_path最適化、各々のファイルをテスト的にMazeGeneratorに組み込んだ \
+致命的なバグは見られず \
+
+1/24 \
+目標：output_fileの作成とvalidatorのPass、書式の統一 \
+find_pathの最適化とgeneratorのデバッグが進み、output_fileがvalidatorの基準に見立った \
+user_inputの最適化を行った
 
 
 Improvement / Eflection point
