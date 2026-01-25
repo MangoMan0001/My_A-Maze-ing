@@ -42,13 +42,13 @@ Pythonベースの迷路生成とゴール探索プログラム
 ### config.txt
 
 ```python
-WIDTH=20	# Maze width (number of cells)
-HEIGHT=15	# Maze height
-ENTRY=0,0	# Entry coordinates (x,y)
-EXIT=19,14	# Exit coordinates (x,y)
+WIDTH=20                # Maze width (number of cells)
+HEIGHT=15	            # Maze height
+ENTRY=0,0	            # Entry coordinates (x,y)
+EXIT=19,14	            # Exit coordinates (x,y)
 OUTPUT_FILE=maze.txt	# Output filename(.txt)
-PERFECT=True	# Is the maze perfect?
-SEED=42			# Maze seed
+PERFECT=True	        # Is the maze perfect?
+SEED=42			        # Maze seed
 ```
 
 PERFECTがTrueだと正答のルートが複数ある迷路が生成される
@@ -92,6 +92,7 @@ Planning
         - [x] path経路の可視化 1/22
         - [x] ユーザー操作の実装 1/23 24
 - [ ] **Phase 4: パッケージ化**
+    - [x] flake8, mypyのPass
     - [ ] `setup.py`の作成
     - [ ] `Makefile`の作成
     - [ ] `README`の完成

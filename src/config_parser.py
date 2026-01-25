@@ -1,67 +1,98 @@
 #!/usr/bin/env python3
+"""設定ファイル(.txt)の解析を行うモジュール."""
+
+VALID_KEYS = {"WIDTH", "HEIGHT", "ENTRY", "EXIT",
+              "OUTPUT_FILE", "PERFECT", "SEED"}
 
 
 def validate_format(line: str) -> bool:
+    """設定行のフォーマットが正しいか検証します.
+
+    正しい形式: 'KEY = VALUE'
+    - '=' は行内に1つだけであること
+    - '=' の左右（キーと値）が空でないこと
+
+    Args:
+        line (str): 検証対象の行文字列.
+
+    Returns:
+        bool: フォーマットが正しければTrue、不正ならFalse.
     """
-    =が１つだけか
-    =の左右が空でないか
-
-    ==== 正しいフォーマット(それ以外はエラー) ====
-
-    KEY = VALUE ('='は1つ)
-    空行・コメント(#)は無視
-
-    """
+    # '='が一つか
     if line.count("=") != 1:
-        return (False)
-    key_value = line.split("=", 1)
+        return False
 
-    if key_value[0].strip() == "" or key_value[1].strip() == "":
-        return (False)
-    return (True)
+    key, value = line.split("=", 1)
+
+    # キーと値が空文字じゃないか
+    if key.strip() == "" or value.strip() == "":
+        return False
+    return True
 
 
-# argvのリストが渡される
-def config_parser(arguments: list) -> dict:
+def config_parser(arguments: list[str]) -> dict[str, str]:
+    """設定ファイルを読み込み、解析結果を辞書形式で返します.
+
+    コマンドライン引数で指定されたファイルを読み込み、
+    定義済みのキー（WIDTH, HEIGHTなど）に対応する値を抽出します。
+    不正なキーやフォーマットエラーがある場合はエラーメッセージを表示します。
+
+    Args:
+        arguments (list): コマンドライン引数のリスト（通常はsys.argv）.
+            arguments[1] に設定ファイルのパスが含まれていることを想定しています。
+
+    Returns:
+        dict: 解析された設定値の辞書 (key: value).
+            引数エラーやファイル読み込みエラーが発生した場合は空の辞書を返します。
     """
-    config.txtを検証
-    値の名前が違ったり、存在しない場合にエラーメッセージを表示
-    →そのvalueを初期化
-    返り値: dict
-    """
-    valid_list = ["WIDTH", "HEIGHT", "ENTRY", "EXIT",
-                  "OUTPUT_FILE", "PERFECT", "SEED"]
+    if len(arguments) != 2:
+        print(f"Usage: {arguments[0]} <config_file>")
+        print()
+        return {}
+
+    config_dict = {}
+    file_path = arguments[1]
+
     try:
-        print(arguments)
-        if len(arguments) != 2:
-            print("no name")
-            print("~tets data~")
-            return {}
-        config_dict = {}
-        line_counter = 1
-        with open(arguments[1], "r") as f:
-            for line in f:
+
+        with open(file_path, "r") as f:
+            for line_num, line in enumerate(f, 1):
+                # 前後の空白削除
                 line = line.strip()
-                # 空行 or # だけならスキップ
+
+                # 空行 or # で始まる行はスキップ
                 if not line or line.startswith("#"):
                     continue
-                # 以降を削除（コメント除去）
-                line = line.split("#", 1)[0]
-                line = line.strip()
-                if validate_format(line):
-                    key, value = line.split("=", 1)
-                    if key not in valid_list:
-                        print(f"Invalid key name in line"
-                              f"{line_counter}: {key}")
-                    config_dict[key.strip()] = value.strip()
+
+                # 行の途中にあるコメントを削除("KEY = VAL # comment"に対応)
+                clean_line = line.split("#", 1)[0].strip()
+
+                if validate_format(clean_line):
+                    key, value = clean_line.split("=", 1)
+                    key = key.strip()
+                    value = value.strip()
+
+                    if key not in VALID_KEYS:
+                        print(f"Error ({line_num}): Invalid key '{key}'")
+                        continue
+
+                    config_dict[key] = value
+
                 else:
-                    print(f"Invalid format in line {line_counter}: {line}")
-                line_counter += 1
-            if line_counter != 8:
-                print("Invalid format. You need 7 elements")
+                    print(f"Error ({line_num}): Invalid format '{line}'")
+                    continue
+
+        if len(config_dict) != len(VALID_KEYS):
+            missing = VALID_KEYS - config_dict.keys()
+            print(f"Error: Missing configuration keys: {missing}")
+
         return config_dict
+
+    except FileNotFoundError:
+        print(f"Error: file not found '{file_path}'")
+        return {}
     except Exception as e:
-        print(e)
+        print(f"Error: {e}")
         return {}
 
 

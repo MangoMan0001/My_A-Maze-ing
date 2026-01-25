@@ -1,4 +1,5 @@
 venv/
+.venv/
 test.txt
 */__pycache__/
 maze.txt
