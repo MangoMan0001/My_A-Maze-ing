@@ -18,4 +18,9 @@ def a_maze_ing() -> None:
 
 
 if __name__ == "__main__":
-    a_maze_ing()
+    try:
+        a_maze_ing()
+    except ImportError as e:
+        print(f"ImportError: {e}")
+    except Exception as e:
+        print(f"Error: {e}")

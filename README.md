@@ -93,8 +93,8 @@ Planning
         - [x] ユーザー操作の実装 1/23 24
 - [ ] **Phase 4: パッケージ化**
     - [x] flake8, mypyのPass
-    - [ ] `setup.py`の作成
-    - [ ] `Makefile`の作成
+    - [x] `pyproject.toml`の作成
+    - [x] `Makefile`の作成
     - [ ] `README`の完成
 
 1/16 \

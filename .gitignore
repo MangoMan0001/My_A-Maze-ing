@@ -4,3 +4,5 @@ test.txt
 */__pycache__/
 maze.txt
 output_validator.py
+*.egg-info/
+.mypy_cache

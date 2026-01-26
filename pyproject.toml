@@ -1,0 +1,19 @@
+# ここで「誰にビルドを頼むか（setuptools）」を指定する。
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+# パッケージの「名札」 pip install した時に表示される
+# 実質setuptools.projectとなる。が、現代ではpythonすべてのtoolがprojectで統一された
+[project]
+name = "mazegen"
+version = "0.0.1"
+description = "A maze generator package for A-Maze-ing"
+readme = "README.md"  # ルートのREADMEを説明書として使う。
+requires-python = ">=3.10"
+dependencies = ["pydantic"]
+
+# setuptoolsへの指示書 「どのフォルダを箱詰めするか」を決める。
+[tool.setuptools.packages.find]
+where = ["."]  # カレントディレクトリから探す
+include = ["mazegen"]  # "mazegen"フォルダだけを入れる
