@@ -4,7 +4,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 # パッケージの「名札」 pip install した時に表示される
-# 実質setuptools.projectとなる。が、現代ではpythonすべてのtoolがprojectで統一された
+# 実質setuptools.projectとなる。が、現代ではpythonですべてのtoolで統一された
 [project]
 name = "mazegen"
 version = "0.0.1"

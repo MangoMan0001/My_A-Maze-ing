@@ -47,11 +47,12 @@ install: ## 仮想環境を作成し、依存関係をインストールする
 run: ## メインプログラムを実行
 	@echo "Running $(NAME)..."
 	@if [ ! -d "$(VENV)" ]; then echo "Venv not found. Run 'make install' first."; exit 1; fi
-	$(PYTHON) $(MAIN_SCRIPT) $(CONFIG_FILE)
+	@$(PYTHON) $(MAIN_SCRIPT) $(CONFIG_FILE)
 
 debug: ## pdbデバッガを使って実行
 	@echo "Debugging $(NAME)..."
-	$(PYTHON) -m pdb $(MAIN_SCRIPT) $(CONFIG_FILE)
+	@if [ ! -d "$(VENV)" ]; then echo "Venv not found. Run 'make install' first."; exit 1; fi
+	@$(PYTHON) -m pdb $(MAIN_SCRIPT) $(CONFIG_FILE)
 
 # ------------------------------------------
 #  Quality Control
@@ -73,6 +74,7 @@ lint-strict: ## より厳しいMypyチェックを実行
 # ------------------------------------------
 build: ## mazegenパッケージをビルドして .whl を作成
 	@echo "Building mazegen package..."
+	@if [ ! -d "$(VENV)" ]; then echo "Venv not found. Run 'make install' first."; exit 1; fi
 	$(PIP) install build
 	$(PYTHON) -m build
 	@echo "Build complete. Check 'dist/' directory."
@@ -82,7 +84,6 @@ build: ## mazegenパッケージをビルドして .whl を作成
 # ------------------------------------------
 clean: ## 一時ファイルやキャッシュを削除
 	@echo "Cleaning up..."
-	@rm -rf $(VENV)
 	@rm -rf __pycache__
 	@rm -rf **/__pycache__
 	@rm -rf .mypy_cache
@@ -91,5 +92,11 @@ clean: ## 一時ファイルやキャッシュを削除
 	@rm -rf build
 	@rm -rf *.egg-info
 	@echo "Clean complete."
+
+fclean: clean ## cleanに加えて仮想環境も削除
+	@echo "Full Cleaning up..."
+	@rm -rf $(VENV)
+	@rm -rf maze.txt
+	@echo "Full Clean complete."
 
 re: clean all

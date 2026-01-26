@@ -2,8 +2,15 @@
 """迷路生成プログラム実行モジュール."""
 
 import sys
-from src import config_parser, output_maze, MazeView, user_input_choice
-from mazegen import MazeGenerator
+try:
+    from src import config_parser, output_maze, MazeView, user_input_choice
+    from mazegen import MazeGenerator
+except ImportError as e:
+    print(f"ImportError: {e}")
+    sys.exit(1)
+except Exception as e:
+    print(f"Error: {e}")
+    sys.exit(1)
 
 
 def a_maze_ing() -> None:
@@ -20,7 +27,5 @@ def a_maze_ing() -> None:
 if __name__ == "__main__":
     try:
         a_maze_ing()
-    except ImportError as e:
-        print(f"ImportError: {e}")
     except Exception as e:
         print(f"Error: {e}")
