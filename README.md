@@ -9,7 +9,7 @@ Pythonベースの迷路生成とゴール探索プログラム
 - PACMANで使用するMAPジェネレータを作成する
     - 設定ファイルを受け取り、迷路を生成する。
     - 最短経路探索アルゴリズムを実装する
-- 迷路のVisualizerを作製する。
+- 迷路のVisualizerを作成する。
 - プログラムの再利用化ができるようになる。
 
 チーム目標
@@ -206,6 +206,10 @@ Docstringの大幅修正を行った。 \
 パッケージ化に必要なpyproject.tomlについて書式と仕組みを理解した \
 ある程度形になったのでrtsubuku君作テスターを通せれば一旦提出してみようかなと思う \
 
+1/27 \
+目標：MazeGeneratorにセッターとゲッターを設ける
+
+
 
 **Improvement / Eflection point**
 
@@ -286,7 +290,8 @@ generator.seed = 42
 flag = generator.perfect
 
 # 現在の設定を取得したい場合
-conf:str = generator.conf.report_status()
+generator.conf.report_status()
+conf:str = generator.report()
 ```
 各種パラメータには`setter`と`getter`が用意されています。
 

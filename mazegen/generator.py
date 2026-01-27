@@ -11,7 +11,7 @@ import sys
 import ast
 from pathlib import Path
 from pydantic import BaseModel, Field, model_validator, \
-                     field_validator, ValidationError
+                     field_validator, ValidationError, ConfigDict
 from typing import Annotated, Any
 from collections import deque
 
@@ -32,6 +32,7 @@ class MazeConfig(BaseModel):
         seed (int): 乱数シード値（0〜1000）。デフォルト(42)
         perfect (bool): 完全迷路のフラグ。デフォルト(True)
     """
+    model_config = ConfigDict(validate_assignment=True)
     # .[弾くもの]intと数字以外のstr
     width: int = Field(alias='WIDTH',
                        ge=0,
@@ -251,25 +252,60 @@ class MazeGenerator:
         """迷路の幅を返します."""
         return self._width
 
+    @width.setter  # setter
+    def width(self, value: int) -> None:
+        """迷路の幅を更新します."""
+        self._conf.width = value
+        self._width = value
+        print(f"WIDTH has been changed to {value}")
+
     @property  # getter
     def height(self) -> int:
         """迷路の高さを返します."""
         return self._height
+
+    @height.setter  # setter
+    def height(self, value: int) -> None:
+        """迷路の高さを更新します."""
+        self._conf.height = value
+        self._height = value
+        print(f"HEIGHT has been changed to {value}")
 
     @property  # getter
     def entry(self) -> tuple[int, int]:
         """スタート地点の座標を返します."""
         return self._entry
 
+    @entry.setter  # setter
+    def entry(self, value: tuple[int, int]) -> None:
+        """スタート地点の座標を更新します."""
+        self._conf.entry = value
+        self._entry = value
+        print(f"ENTRY has been changed to {value}")
+
     @property  # getter
     def exit(self) -> tuple[int, int]:
         """ゴール地点の座標を返します."""
         return self._exit
 
+    @exit.setter  # setter
+    def exit(self, value: tuple[int, int]) -> None:
+        """ゴール地点の座標を更新します."""
+        self._conf.exit = value
+        self._exit = value
+        print(f"EXIT has been changed to {value}")
+
     @property  # getter
     def output_file(self) -> Path:
         """出力ファイルのパスを返します."""
         return self._output_file
+
+    @output_file.setter  # setter
+    def output_file(self, value: Path) -> None:
+        """出力ファイルのパスを更新します."""
+        self._conf.output_file = value
+        self._output_file = value
+        print(f"EXIT has been changed to {value}")
 
     @property  # getter
     def seed(self) -> int:
@@ -279,10 +315,8 @@ class MazeGenerator:
     @seed.setter  # setter
     def seed(self, value: int) -> None:
         """乱数シード値を更新します."""
-        if value < 0:
-            raise ValueError("SEED cannot be changed to a negative value.")
-        self._seed = value
         self._conf.seed = value
+        self._seed = value
         print(f"SEED has been changed to {value}")
 
     @property  # getter
@@ -293,8 +327,8 @@ class MazeGenerator:
     @perfect.setter  # setter
     def perfect(self, value: bool) -> None:
         """Perfectフラグを更新します."""
-        self._perfect = value
         self._conf.perfect = value
+        self._perfect = value
         print(f"PEFECT has been changed to {value}")
 
     # --- Core Methods ---
