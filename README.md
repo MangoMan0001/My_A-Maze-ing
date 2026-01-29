@@ -189,26 +189,32 @@ Visualizerもクラス設計を事前にしておくべきだったと反省 \
 1/23 \
 目標：PACMANメソッド実装、visualizer、findpath最適化と組み込み、ユーザー操作実装 \
 ユーザー操作、visualizerのクラス化、find_path最適化、各々のファイルをテスト的にMazeGeneratorに組み込んだ \
-致命的なバグは見られず \
+致命的なバグは見られず
 
 1/24 \
 目標：output_fileの作成とvalidatorのPass、書式の統一 \
 find_pathの最適化とgeneratorのデバッグが進み、output_fileがvalidatorの基準に見立った \
-user_inputの最適化を行った \
+user_inputの最適化を行った
 
 1/25 \
 目標: Docstringの最適化、mypy, flake8のPass \
 Docstringの大幅修正を行った。 \
-書式がいくつかあること、それに準じたテスターがflake8やmypyに存在していることを学んだ \
+書式がいくつかあること、それに準じたテスターがflake8やmypyに存在していることを学んだ
 
 1/26 \
 目標：パッケージ化、MakeFileとREADMEの最適化 \
 パッケージ化に必要なpyproject.tomlについて書式と仕組みを理解した \
-ある程度形になったのでrtsubuku君作テスターを通せれば一旦提出してみようかなと思う \
+ある程度形になったのでrtsubuku君作テスターを通せれば一旦提出してみようかなと思う
 
 1/27 \
 目標：MazeGeneratorにセッターとゲッターを設ける
 
+1/28 \
+テスター導入
+
+1/29
+提出 -> Pass
+~完~
 
 
 **Improvement / Eflection point**
