@@ -154,7 +154,7 @@ rtsubuku
     - [x] flake8, mypyのPass
     - [x] `pyproject.toml`の作成
     - [x] `Makefile`の作成
-    - [ ] `README`の完成
+    - [x] `README`の完成
 
 1/16 \
 初日 \
@@ -212,9 +212,9 @@ Docstringの大幅修正を行った。 \
 1/28 \
 テスター導入
 
-1/29
-提出 -> Pass
-~完~
+1/29 \
+提出 -> Pass \
+完
 
 
 **Improvement / Eflection point**
